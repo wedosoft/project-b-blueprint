@@ -176,6 +176,30 @@ export const AIAnalysisPanel = ({ sessionId, messages }: AIAnalysisPanelProps) =
     return <Icon className="w-4 h-4" />;
   };
 
+  const parseAndFormatSuggestion = (text: string, type: string) => {
+    try {
+      if (type === 'emotion') {
+        const parsed = JSON.parse(text);
+        return `감정: ${parsed.sentiment}\n강도: ${(parsed.intensity * 100).toFixed(0)}%\n키워드: ${parsed.keywords?.join(', ') || 'N/A'}`;
+      } else if (type === 'intent') {
+        const parsed = JSON.parse(text);
+        return `의도: ${parsed.intent}\n신뢰도: ${(parsed.confidence * 100).toFixed(0)}%\n근거: ${parsed.reason}`;
+      }
+    } catch (e) {
+      // JSON 파싱 실패 시 원본 텍스트 반환
+    }
+    return text;
+  };
+
+  const analyzeAll = async () => {
+    const types: ('summary' | 'emotion' | 'intent' | 'reply')[] = ['summary', 'emotion', 'intent', 'reply'];
+    for (const type of types) {
+      await analyzeWithAI(type);
+      // 각 분석 사이에 약간의 지연
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+  };
+
   const renderSuggestionCard = (type: string) => {
     const suggestion = suggestions[type];
     const isLoading = loadingTypes.has(type);
@@ -206,7 +230,7 @@ export const AIAnalysisPanel = ({ sessionId, messages }: AIAnalysisPanelProps) =
           {suggestion ? (
             <div className="space-y-3">
               <div className="text-sm whitespace-pre-wrap bg-muted/50 p-3 rounded-md">
-                {suggestion.text}
+                {parseAndFormatSuggestion(suggestion.text, type)}
               </div>
               {suggestion.metadata?.latency && (
                 <Badge variant="secondary" className="text-xs">
@@ -247,10 +271,20 @@ export const AIAnalysisPanel = ({ sessionId, messages }: AIAnalysisPanelProps) =
   return (
     <div className="h-full flex flex-col bg-card">
       <div className="border-b border-border p-4 bg-muted/30">
-        <h2 className="text-lg font-semibold flex items-center gap-2">
-          <Brain className="w-5 h-5 text-primary" />
-          AI 분석
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold flex items-center gap-2">
+            <Brain className="w-5 h-5 text-primary" />
+            AI 분석
+          </h2>
+          <Button
+            onClick={analyzeAll}
+            disabled={messages.length === 0 || loadingTypes.size > 0}
+            size="sm"
+          >
+            <Sparkles className="w-4 h-4 mr-2" />
+            전체 분석
+          </Button>
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4">
