@@ -49,42 +49,50 @@ serve(async (req) => {
       `${m.speaker === 'customer' ? '고객' : '상담사'}: ${m.text}`
     ).join('\n');
 
+    const messageCount = messages.length;
     let systemPrompt = '';
     let userPrompt = '';
 
     // 분석 타입별 프롬프트 설정
     if (type === 'summary') {
-      systemPrompt = `당신은 고객센터 대화를 요약하는 AI 어시스턴트입니다. 
-대화의 핵심 내용을 3-4문장으로 간결하게 요약해주세요.
-- 고객의 주요 문의사항
-- 상담사의 대응 내용
-- 현재 상황 및 다음 단계`;
+      systemPrompt = `당신은 고객센터 대화를 요약하는 AI 어시스턴트입니다.
+**중요**: 대화 내용만을 기반으로 요약하세요. 대화에 없는 정보를 추가하지 마세요.
+- 메시지가 1-2개라면: 1-2문장으로 현재까지의 내용만 간단히 정리
+- 메시지가 3개 이상이라면: 고객의 문의사항, 상담 진행 상황을 2-3문장으로 요약
+- 정보가 불충분하면: "아직 대화가 시작 단계입니다" 라고 명시`;
       
-      userPrompt = `다음 고객센터 대화를 요약해주세요:\n\n${conversationContext}`;
+      userPrompt = `다음 고객센터 대화를 요약해주세요 (메시지 수: ${messageCount}):\n\n${conversationContext}`;
 
     } else if (type === 'emotion') {
       systemPrompt = `당신은 고객 감정을 분석하는 AI 어시스턴트입니다.
-대화에서 고객의 감정 상태를 분석하여 JSON 형식으로 응답해주세요.
-형식: {"sentiment": "긍정|중립|부정", "intensity": 0.0-1.0, "keywords": ["키워드1", "키워드2"]}`;
+**중요**: 실제 대화 내용만을 기반으로 분석하세요. 추측하지 마세요.
+- 대화가 짧으면 intensity를 낮게(0.3 이하) 설정
+- 명확한 감정 표현이 없으면 "중립"으로 분류
+- keywords는 실제 대화에서 나온 단어만 포함
+형식: {"sentiment": "긍정|중립|부정", "intensity": 0.0-1.0, "keywords": ["실제단어1", "실제단어2"]}`;
       
-      userPrompt = `다음 대화에서 고객의 감정을 분석해주세요:\n\n${conversationContext}`;
+      userPrompt = `다음 대화에서 고객의 감정을 분석해주세요 (메시지 수: ${messageCount}):\n\n${conversationContext}`;
 
     } else if (type === 'intent') {
       systemPrompt = `당신은 고객 의도를 분류하는 AI 어시스턴트입니다.
-고객의 문의 의도를 다음 중 하나로 분류하고, JSON 형식으로 응답해주세요.
+**중요**: 실제 대화 내용만으로 판단하세요. 가정하지 마세요.
+- 대화가 짧으면 confidence를 낮게(0.5 이하) 설정
+- 불명확하면 "기타"로 분류하고 그 이유를 명시
+- reason에는 실제 대화 내용을 근거로 제시
 카테고리: 불만, 문의, 환불요청, 정보요청, 기술지원, 기타
-형식: {"intent": "카테고리", "confidence": 0.0-1.0, "reason": "분류 근거"}`;
+형식: {"intent": "카테고리", "confidence": 0.0-1.0, "reason": "실제 대화 내용 기반 근거"}`;
       
-      userPrompt = `다음 대화에서 고객의 의도를 분류해주세요:\n\n${conversationContext}`;
+      userPrompt = `다음 대화에서 고객의 의도를 분류해주세요 (메시지 수: ${messageCount}):\n\n${conversationContext}`;
 
     } else if (type === 'reply') {
       systemPrompt = `당신은 고객센터 상담사를 돕는 AI 어시스턴트입니다.
-현재 상황에 적합한 응답을 1-2문장으로 제안해주세요.
-- 공손하고 전문적인 톤
-- 구체적이고 실용적인 조언
-- 고객의 감정을 고려한 응답`;
+**중요**: 실제 대화 맥락에 맞는 응답만 제안하세요.
+- 대화가 시작 단계라면: 인사와 경청 자세를 보이는 간단한 응답
+- 정보가 부족하면: 추가 정보를 요청하는 응답 제안
+- 구체적 상황이 있으면: 해당 상황에 맞는 구체적 응답
+- 1-2문장으로 간결하게`;
       
-      userPrompt = `다음 대화 상황에서 상담사가 사용할 수 있는 적절한 응답을 제안해주세요:\n\n${conversationContext}`;
+      userPrompt = `다음 대화 상황에서 상담사가 사용할 수 있는 적절한 응답을 제안해주세요 (메시지 수: ${messageCount}):\n\n${conversationContext}`;
     }
 
     // Lovable AI 호출
@@ -101,7 +109,7 @@ serve(async (req) => {
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
-        temperature: 0.7,
+        temperature: 0.3, // 낮은 temperature로 환각 방지
       }),
     });
 
