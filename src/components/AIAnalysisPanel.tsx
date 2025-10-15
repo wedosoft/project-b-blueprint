@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { 
   Brain, 
   Heart, 
@@ -40,6 +42,9 @@ interface AIAnalysisPanelProps {
 export const AIAnalysisPanel = ({ sessionId, messages }: AIAnalysisPanelProps) => {
   const [suggestions, setSuggestions] = useState<Record<string, AISuggestion>>({});
   const [loadingTypes, setLoadingTypes] = useState<Set<string>>(new Set());
+  const [editOpen, setEditOpen] = useState(false);
+  const [editText, setEditText] = useState('');
+  const [sending, setSending] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -177,13 +182,27 @@ export const AIAnalysisPanel = ({ sessionId, messages }: AIAnalysisPanelProps) =
   };
 
   const parseAndFormatSuggestion = (text: string, type: string) => {
+    const extractJsonCandidate = (raw: string) => {
+      // 1) 코드펜스 안의 JSON 추출
+      const codeMatch = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
+      if (codeMatch) return codeMatch[1].trim();
+      // 2) 본문 중 첫번째 중괄호 블록 추출
+      const braceMatch = raw.match(/(\{[\s\S]*\})/);
+      if (braceMatch) return braceMatch[1];
+      return raw.trim();
+    };
+
     try {
+      const candidate = extractJsonCandidate(text);
       if (type === 'emotion') {
-        const parsed = JSON.parse(text);
-        return `감정: ${parsed.sentiment}\n강도: ${(parsed.intensity * 100).toFixed(0)}%\n키워드: ${parsed.keywords?.join(', ') || 'N/A'}`;
+        const parsed = JSON.parse(candidate);
+        const intensity = typeof parsed.intensity === 'number' ? (parsed.intensity * 100).toFixed(0) + '%' : 'N/A';
+        const keywords = Array.isArray(parsed.keywords) ? parsed.keywords.join(', ') : 'N/A';
+        return `감정: ${parsed.sentiment ?? 'N/A'}\n강도: ${intensity}\n키워드: ${keywords}`;
       } else if (type === 'intent') {
-        const parsed = JSON.parse(text);
-        return `의도: ${parsed.intent}\n신뢰도: ${(parsed.confidence * 100).toFixed(0)}%\n근거: ${parsed.reason}`;
+        const parsed = JSON.parse(candidate);
+        const confidence = typeof parsed.confidence === 'number' ? (parsed.confidence * 100).toFixed(0) + '%' : 'N/A';
+        return `의도: ${parsed.intent ?? 'N/A'}\n신뢰도: ${confidence}\n근거: ${parsed.reason ?? 'N/A'}`;
       }
     } catch (e) {
       // JSON 파싱 실패 시 원본 텍스트 반환
@@ -197,6 +216,26 @@ export const AIAnalysisPanel = ({ sessionId, messages }: AIAnalysisPanelProps) =
       await analyzeWithAI(type);
       // 각 분석 사이에 약간의 지연
       await new Promise(resolve => setTimeout(resolve, 500));
+    }
+  };
+
+  const sendAgentMessage = async (text: string) => {
+    const content = text.trim();
+    if (!content) return;
+    setSending(true);
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .insert({ session_id: sessionId, speaker: 'agent', text: content });
+      if (error) throw error;
+      await supabase.from('sessions').update({ status: 'in_progress' }).eq('id', sessionId);
+      toast({ title: '전송 완료', description: '응답이 전송되었습니다.' });
+    } catch (e) {
+      console.error(e);
+      toast({ title: '전송 실패', description: e instanceof Error ? e.message : '알 수 없는 오류', variant: 'destructive' });
+    } finally {
+      setSending(false);
+      setEditOpen(false);
     }
   };
 
@@ -229,32 +268,55 @@ export const AIAnalysisPanel = ({ sessionId, messages }: AIAnalysisPanelProps) =
         <CardContent>
           {suggestion ? (
             <div className="space-y-3">
-              <div className="text-sm whitespace-pre-wrap bg-muted/50 p-3 rounded-md">
-                {parseAndFormatSuggestion(suggestion.text, type)}
-              </div>
-              {suggestion.metadata?.latency && (
-                <Badge variant="secondary" className="text-xs">
-                  응답시간: {suggestion.metadata.latency}ms
-                </Badge>
-              )}
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleFeedback(suggestion.id, true)}
-                >
-                  <ThumbsUp className="w-3 h-3 mr-1" />
-                  유용함
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleFeedback(suggestion.id, false)}
-                >
-                  <ThumbsDown className="w-3 h-3 mr-1" />
-                  개선 필요
-                </Button>
-              </div>
+              {(() => {
+                const formattedText = parseAndFormatSuggestion(suggestion.text, type);
+                return (
+                  <>
+                    <div className="text-sm whitespace-pre-wrap bg-muted/50 p-3 rounded-md">
+                      {formattedText}
+                    </div>
+                    {suggestion.metadata?.latency && (
+                      <Badge variant="secondary" className="text-xs">
+                        응답시간: {suggestion.metadata.latency}ms
+                      </Badge>
+                    )}
+
+                    {(type === 'intent' || type === 'emotion' || type === 'reply') && (
+                      <div className="flex gap-2">
+                        <Button size="sm" onClick={() => sendAgentMessage(formattedText)} disabled={sending}>
+                          {sending ? '전송 중...' : '보내기'}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => { setEditText(formattedText); setEditOpen(true); }}
+                        >
+                          편집 후 전송
+                        </Button>
+                      </div>
+                    )}
+
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleFeedback(suggestion.id, true)}
+                      >
+                        <ThumbsUp className="w-3 h-3 mr-1" />
+                        유용함
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleFeedback(suggestion.id, false)}
+                      >
+                        <ThumbsDown className="w-3 h-3 mr-1" />
+                        개선 필요
+                      </Button>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           ) : (
             <p className="text-sm text-muted-foreground">
