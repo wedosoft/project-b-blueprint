@@ -383,6 +383,28 @@ export const AIAnalysisPanel = ({ sessionId, messages }: AIAnalysisPanelProps) =
           </TabsContent>
         </Tabs>
       </div>
+
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>응답 편집</DialogTitle>
+          </DialogHeader>
+          <Textarea
+            value={editText}
+            onChange={(e) => setEditText(e.target.value)}
+            className="min-h-[200px]"
+            placeholder="응답 내용을 편집하세요..."
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditOpen(false)}>
+              취소
+            </Button>
+            <Button onClick={() => sendAgentMessage(editText)} disabled={sending}>
+              {sending ? '전송 중...' : '전송'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
