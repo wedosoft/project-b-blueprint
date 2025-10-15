@@ -17,9 +17,10 @@ interface Message {
 interface ChatInterfaceProps {
   sessionId: string;
   onMessagesUpdate: (messages: Message[]) => void;
+  isCustomerView?: boolean;
 }
 
-export const ChatInterface = ({ sessionId, onMessagesUpdate }: ChatInterfaceProps) => {
+export const ChatInterface = ({ sessionId, onMessagesUpdate, isCustomerView = false }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -92,7 +93,7 @@ export const ChatInterface = ({ sessionId, onMessagesUpdate }: ChatInterfaceProp
         .from('messages')
         .insert({
           session_id: sessionId,
-          speaker: 'agent',
+          speaker: isCustomerView ? 'customer' : 'agent',
           text: messageText
         });
 
@@ -128,7 +129,9 @@ export const ChatInterface = ({ sessionId, onMessagesUpdate }: ChatInterfaceProp
     <div className="flex flex-col h-full bg-card">
       <div className="border-b border-border p-4 bg-muted/30">
         <h2 className="text-lg font-semibold">대화 내역</h2>
-        <p className="text-sm text-muted-foreground">상담사 응답 입력</p>
+        <p className="text-sm text-muted-foreground">
+          {isCustomerView ? '고객 문의' : '상담사 응답 입력'}
+        </p>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -163,7 +166,7 @@ export const ChatInterface = ({ sessionId, onMessagesUpdate }: ChatInterfaceProp
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="상담사 응답을 입력하세요..."
+            placeholder={isCustomerView ? '메시지를 입력하세요...' : '상담사 응답을 입력하세요...'}
             className="min-h-[60px] resize-none"
             disabled={isLoading}
           />

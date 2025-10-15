@@ -4,16 +4,17 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { MessageSquare, CheckCircle } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { ChatInterface } from '@/components/ChatInterface';
 
 const Customer = () => {
   const [name, setName] = useState('');
   const [title, setTitle] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -57,19 +58,11 @@ const Customer = () => {
 
       if (messageError) throw messageError;
 
-      setSubmitted(true);
+      setSessionId(session.id);
       toast({
         title: "문의 접수 완료",
-        description: "문의가 성공적으로 접수되었습니다. 곧 상담사가 응답할 예정입니다.",
+        description: "상담사와 대화를 시작하세요.",
       });
-
-      // 폼 초기화
-      setTimeout(() => {
-        setName('');
-        setTitle('');
-        setMessage('');
-        setSubmitted(false);
-      }, 3000);
 
     } catch (error) {
       console.error('Error submitting inquiry:', error);
@@ -83,21 +76,40 @@ const Customer = () => {
     }
   };
 
-  if (submitted) {
+  // 티켓 제출 후 채팅 인터페이스 표시
+  if (sessionId) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="max-w-md w-full p-8 text-center">
-          <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center">
-              <CheckCircle className="w-8 h-8 text-success" />
+      <div className="min-h-screen bg-background">
+        <header className="border-b border-border bg-card shadow-sm">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+                  <MessageSquare className="w-6 h-6 text-primary-foreground" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-foreground">고객 상담</h1>
+                  <p className="text-sm text-muted-foreground">{name}님의 상담</p>
+                </div>
+              </div>
+              <Button variant="outline" onClick={() => setSessionId(null)}>
+                새 문의 작성
+              </Button>
             </div>
           </div>
-          <h2 className="text-2xl font-bold mb-2">문의 접수 완료</h2>
-          <p className="text-muted-foreground">
-            문의가 성공적으로 접수되었습니다.<br />
-            상담사가 곧 응답할 예정입니다.
-          </p>
-        </Card>
+        </header>
+
+        <main className="container mx-auto px-4 py-6">
+          <div className="max-w-4xl mx-auto h-[calc(100vh-140px)]">
+            <Card className="h-full overflow-hidden">
+              <ChatInterface 
+                sessionId={sessionId}
+                onMessagesUpdate={() => {}}
+                isCustomerView={true}
+              />
+            </Card>
+          </div>
+        </main>
       </div>
     );
   }
