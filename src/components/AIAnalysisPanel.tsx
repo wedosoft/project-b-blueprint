@@ -281,7 +281,7 @@ export const AIAnalysisPanel = ({ sessionId, messages }: AIAnalysisPanelProps) =
                       </Badge>
                     )}
 
-                    {(type === 'intent' || type === 'emotion' || type === 'reply') && (
+                    {type === 'reply' && (
                       <div className="flex gap-2">
                         <Button size="sm" onClick={() => sendAgentMessage(formattedText)} disabled={sending}>
                           {sending ? '전송 중...' : '보내기'}
