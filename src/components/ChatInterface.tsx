@@ -22,7 +22,6 @@ interface ChatInterfaceProps {
 export const ChatInterface = ({ sessionId, onMessagesUpdate }: ChatInterfaceProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
-  const [speaker, setSpeaker] = useState<'agent' | 'customer'>('customer');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -93,11 +92,17 @@ export const ChatInterface = ({ sessionId, onMessagesUpdate }: ChatInterfaceProp
         .from('messages')
         .insert({
           session_id: sessionId,
-          speaker,
+          speaker: 'agent',
           text: messageText
         });
 
       if (error) throw error;
+
+      // 상태를 in_progress로 업데이트
+      await supabase
+        .from('sessions')
+        .update({ status: 'in_progress' })
+        .eq('id', sessionId);
 
     } catch (error) {
       console.error('Error sending message:', error);
@@ -122,24 +127,8 @@ export const ChatInterface = ({ sessionId, onMessagesUpdate }: ChatInterfaceProp
   return (
     <div className="flex flex-col h-full bg-card">
       <div className="border-b border-border p-4 bg-muted/30">
-        <div className="flex gap-2">
-          <Button
-            variant={speaker === 'customer' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setSpeaker('customer')}
-          >
-            <User className="w-4 h-4 mr-2" />
-            고객
-          </Button>
-          <Button
-            variant={speaker === 'agent' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setSpeaker('agent')}
-          >
-            <Headphones className="w-4 h-4 mr-2" />
-            상담사
-          </Button>
-        </div>
+        <h2 className="text-lg font-semibold">대화 내역</h2>
+        <p className="text-sm text-muted-foreground">상담사 응답 입력</p>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -174,7 +163,7 @@ export const ChatInterface = ({ sessionId, onMessagesUpdate }: ChatInterfaceProp
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder={`${speaker === 'customer' ? '고객' : '상담사'} 메시지 입력...`}
+            placeholder="상담사 응답을 입력하세요..."
             className="min-h-[60px] resize-none"
             disabled={isLoading}
           />
