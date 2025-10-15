@@ -159,6 +159,9 @@ export type Database = {
           customer_id: string | null
           customer_name: string | null
           id: string
+          status: string | null
+          title: string | null
+          updated_at: string | null
         }
         Insert: {
           agent_id: string
@@ -166,6 +169,9 @@ export type Database = {
           customer_id?: string | null
           customer_name?: string | null
           id?: string
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
         }
         Update: {
           agent_id?: string
@@ -173,6 +179,9 @@ export type Database = {
           customer_id?: string | null
           customer_name?: string | null
           id?: string
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
