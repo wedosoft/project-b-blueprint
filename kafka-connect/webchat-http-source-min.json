@@ -1,0 +1,11 @@
+{
+  "name": "webchat-http-source",
+  "config": {
+    "connector.class": "com.github.castorm.kafka.connect.http.HttpSourceConnector",
+    "tasks.max": "1",
+    "http.request.url": "http://host.docker.internal:5001/messages",
+    "http.response.list.pointer": "/messages",
+    "http.response.record.pointer": "/",
+    "kafka.topic": "features.raw.webchat"
+  }
+}
