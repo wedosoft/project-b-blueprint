@@ -23,4 +23,7 @@ backend/venv/
 *.njsproj
 *.sln
 *.sw?
-.env
+.env*
+.gcp/
+.gcloud*
+raw_data/
