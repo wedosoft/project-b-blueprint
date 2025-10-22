@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-contact-center-backend"
+version = "0.1.0"
+description = "FastAPI backend for the AI Contact Center MVP"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115,<1.0",
+    "uvicorn[standard]>=0.30,<1.0",
+    "pydantic>=2.7,<3.0",
+    "httpx>=0.27,<1.0",
+    "supabase-py>=2.4,<3.0",
+    "qdrant-client>=1.9,<2.0",
+    "apscheduler>=3.10,<4.0",
+    "openai>=1.40,<2.0",
+    "python-dotenv>=1.0,<2.0"
+]
+readme = "../specs/001-ai-contact-center-mvp/quickstart.md"
+license = { text = "Proprietary" }
+authors = [{ name = "AI Contact Center Team" }]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3,<9.0",
+    "pytest-asyncio>=0.23,<1.0",
+    "schemathesis>=3.28,<4.0",
+    "respx>=0.21,<1.0",
+    "black>=24.8,<25.0",
+    "ruff>=0.7,<1.0"
+]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "B", "I"]
+ignore = ["E501"]
