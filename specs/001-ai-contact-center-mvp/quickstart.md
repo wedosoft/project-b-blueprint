@@ -35,6 +35,7 @@ DATABASE_URL=postgresql://postgres:[password]@[host]:6543/postgres
 QDRANT_URL=...
 QDRANT_API_KEY=...
 QDRANT_COLLECTION=ccos-mvp
+QDRANT_VECTOR_DIMENSION=1536
 
 # LLM
 OPENAI_API_KEY=...
@@ -46,6 +47,12 @@ FLY_API_TOKEN=...
 
 # Observability
 SENTRY_DSN=...                   # optional
+
+# Runtime
+BACKEND_BASE_URL=http://localhost:8000
+FRONTEND_ORIGIN=http://localhost:5173
+LOG_LEVEL=INFO
+SCHEDULER_ENABLED=true
 ```
 > **주의**: 각 키는 1Password 또는 Vault에서 발급한다. 로컬 `.env`는 Git에 커밋하지 않는다.
 

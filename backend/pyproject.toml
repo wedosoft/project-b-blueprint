@@ -16,7 +16,8 @@ dependencies = [
     "qdrant-client>=1.9,<2.0",
     "apscheduler>=3.10,<4.0",
     "openai>=1.40,<2.0",
-    "python-dotenv>=1.0,<2.0"
+    "python-dotenv>=1.0,<2.0",
+    "anthropic>=0.34,<1.0"
 ]
 readme = "../specs/001-ai-contact-center-mvp/quickstart.md"
 license = { text = "Proprietary" }

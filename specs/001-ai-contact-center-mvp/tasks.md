@@ -33,12 +33,12 @@ description: "Task list for AI Contact Center OS MVP feature implementation"
 - [x] T006 Configure Supabase project linkage and CLI settings in `supabase/config.toml`
 - [x] T007 Generate initial Postgres migration from data model in `supabase/migrations/20251022_initial_schema.sql`
 - [x] T008 [P] Author row-level security policies for conversations/messages/approvals in `supabase/policies/mvp_policies.sql`
-- [ ] T009 [P] Implement centralized settings loader covering Supabase, Qdrant, LLM, Fly.io in `backend/app/core/config.py`
-- [ ] T010 [P] Create Qdrant bootstrap and health-check script in `backend/infrastructure/embeddings/bootstrap_qdrant.py`
-- [ ] T011 Implement LLM orchestration wrapper with retry & fallback in `backend/app/services/llm_service.py`
-- [ ] T012 Implement background scheduler bootstrap with APScheduler in `backend/app/workers/scheduler.py`
-- [ ] T013 Define Supabase Realtime channel contracts and payload schema in `supabase/realtime/conversation_channels.sql`
-- [ ] T014 Configure CI/CD pipeline deploying to Fly.io and running pytest/pnpm tests in `.github/workflows/mvp-ci.yml`
+- [x] T009 [P] Implement centralized settings loader covering Supabase, Qdrant, LLM, Fly.io in `backend/app/core/config.py`
+- [x] T010 [P] Create Qdrant bootstrap and health-check script in `backend/infrastructure/embeddings/bootstrap_qdrant.py`
+- [x] T011 Implement LLM orchestration wrapper with retry & fallback in `backend/app/services/llm_service.py`
+- [x] T012 Implement background scheduler bootstrap with APScheduler in `backend/app/workers/scheduler.py`
+- [x] T013 Define Supabase Realtime channel contracts and payload schema in `supabase/realtime/conversation_channels.sql`
+- [x] T014 Configure CI/CD pipeline deploying to Fly.io and running pytest/pnpm tests in `.github/workflows/mvp-ci.yml`
 
 **Checkpoint**: Foundational infrastructure ready — proceed to user stories
 
