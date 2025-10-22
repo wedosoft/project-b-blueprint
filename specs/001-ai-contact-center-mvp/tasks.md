@@ -30,9 +30,9 @@ description: "Task list for AI Contact Center OS MVP feature implementation"
 
 **Purpose**: Core infrastructure that MUST be complete before any user story work begins
 
-- [ ] T006 Configure Supabase project linkage and CLI settings in `supabase/config.toml`
-- [ ] T007 Generate initial Postgres migration from data model in `supabase/migrations/20251022_initial_schema.sql`
-- [ ] T008 [P] Author row-level security policies for conversations/messages/approvals in `supabase/policies/mvp_policies.sql`
+- [x] T006 Configure Supabase project linkage and CLI settings in `supabase/config.toml`
+- [x] T007 Generate initial Postgres migration from data model in `supabase/migrations/20251022_initial_schema.sql`
+- [x] T008 [P] Author row-level security policies for conversations/messages/approvals in `supabase/policies/mvp_policies.sql`
 - [ ] T009 [P] Implement centralized settings loader covering Supabase, Qdrant, LLM, Fly.io in `backend/app/core/config.py`
 - [ ] T010 [P] Create Qdrant bootstrap and health-check script in `backend/infrastructure/embeddings/bootstrap_qdrant.py`
 - [ ] T011 Implement LLM orchestration wrapper with retry & fallback in `backend/app/services/llm_service.py`

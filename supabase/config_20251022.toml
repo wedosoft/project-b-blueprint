@@ -1,0 +1,31 @@
+project_id = "hcmftumdvupfqovuxxeo"
+organization_id = "your-organization-id"
+
+[db]
+host = "db.hcmftumdvupfqovuxxeo.supabase.co"
+port = 5432
+pooler_port = 6543
+schema = "public"
+database = "postgres"
+user = "postgres"
+password = "${SUPABASE_DB_PASSWORD}"
+sslmode = "require"
+
+[api]
+url = "https://hcmftumdvupfqovuxxeo.supabase.co"
+rest_url = "https://hcmftumdvupfqovuxxeo.supabase.co/rest/v1"
+realtime_url = "wss://hcmftumdvupfqovuxxeo.supabase.co/realtime/v1"
+functions_url = "https://hcmftumdvupfqovuxxeo.supabase.co/functions/v1"
+storage_url = "https://hcmftumdvupfqovuxxeo.supabase.co/storage/v1"
+
+[auth]
+site_url = "https://your-frontend-domain"
+additional_redirect_urls = ["http://localhost:5173", "https://your-preview-host"]
+service_role_key = "${SUPABASE_SERVICE_ROLE_KEY}"
+anon_key = "${SUPABASE_ANON_KEY}"
+
+[functions]
+ignore = ["supabase/functions/.gitignore"]
+
+[studio]
+url = "https://studio.supabase.com"
