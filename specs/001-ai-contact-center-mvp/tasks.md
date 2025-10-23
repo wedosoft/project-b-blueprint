@@ -52,8 +52,8 @@ description: "Task list for AI Contact Center OS MVP feature implementation"
 
 ### Tests (write first)
 
-- [ ] T015 [P] [US1] 작성된 계약대로 POST `/conversations`를 검증하는 Schemathesis 테스트 추가 in `backend/tests/contract/test_conversations.py`
-- [ ] T016 [P] [US1] 채팅 컴포저 및 응답 렌더링 유닛 테스트 작성 in `frontend/tests/unit/chatComposer.test.tsx`
+- [x] T015 [P] [US1] 작성된 계약대로 POST `/conversations`를 검증하는 Schemathesis 테스트 추가 in `backend/tests/contract/test_conversations.py`
+- [x] T016 [P] [US1] 채팅 컴포저 및 응답 렌더링 유닛 테스트 작성 in `frontend/tests/unit/chatComposer.test.tsx`
 
 ### Implementation
 

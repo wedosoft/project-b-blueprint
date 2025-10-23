@@ -1,12 +1,18 @@
 """Contract tests for conversation endpoints."""
 
 import os
+import sys
 from pathlib import Path
 
 from fastapi.testclient import TestClient
 from hypothesis import given, settings
 from schemathesis import Case
 from schemathesis import openapi
+
+# Ensure repository root is on sys.path for package imports.
+REPO_ROOT = Path(__file__).resolve().parents[3]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 # Minimal configuration so `get_settings()` can resolve required secrets.
 os.environ.setdefault("SUPABASE_URL", "https://example.supabase.co")
@@ -18,7 +24,7 @@ os.environ.setdefault("FLY_APP_NAME", "ai-contact-center-backend")
 os.environ.setdefault("BACKEND_BASE_URL", "http://localhost:8000")
 os.environ.setdefault("FRONTEND_ORIGIN", "http://localhost:5173")
 
-from app.main import app  # noqa: E402
+from backend.app.main import app  # noqa: E402
 
 
 SCHEMA_PATH = (

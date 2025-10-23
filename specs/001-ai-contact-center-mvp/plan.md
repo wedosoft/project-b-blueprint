@@ -106,6 +106,10 @@ shared/
 |-----------|------------|-------------------------------------|
 | [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
 | [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+
+## Progress Log
+
+- **2025-10-23**: US1 선행 작업으로 POST `/v1/conversations` FastAPI 라우트, 인메모리 저장소/서비스, Pydantic 스키마를 추가하고 Schemathesis 계약 테스트(T015)와 Frontend ChatPanel 유닛 테스트(T016)를 통과시켰습니다. 프론트엔드 채팅 입력 UI를 Chakra UI 기반으로 구현했으며, 백엔드 설정 모듈과 테스트 환경 변수를 정비해 로컬 `backend/venv`에서 테스트가 바로 실행되도록 정리했습니다.
 ## Phase 0 Research Scope
 
 - Deployment platform → Fly.io (research.md)
@@ -114,4 +118,3 @@ shared/
 - Background jobs → FastAPI BackgroundTasks + APScheduler (research.md)
 - Constitution path → Draft minimal principles before Phase 1 (research.md)
 - Infrastructure automation → CLI-first (Supabase/Fly) with Terraform deferred (research.md)
-

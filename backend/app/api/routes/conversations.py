@@ -6,9 +6,9 @@ from functools import lru_cache
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.repositories.conversation_repository import ConversationRepository
-from app.schemas.conversation import ConversationResponse, StartConversationRequest
-from app.services.conversation_service import ConversationService
+from backend.app.repositories.conversation_repository import ConversationRepository
+from backend.app.schemas.conversation import ConversationResponse, StartConversationRequest
+from backend.app.services.conversation_service import ConversationService
 
 
 router = APIRouter(prefix="/v1/conversations", tags=["Conversations"])
