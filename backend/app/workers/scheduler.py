@@ -9,7 +9,7 @@ from typing import Awaitable, Callable, Optional
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 
-from backend.core.config import get_settings
+from core.config import get_settings
 
 logger = logging.getLogger(__name__)
 

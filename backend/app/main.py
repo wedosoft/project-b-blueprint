@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI
 
-from backend.app.api import register_routes
+from app.api import register_routes
 
 
 def create_app() -> FastAPI:

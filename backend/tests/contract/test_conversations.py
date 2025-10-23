@@ -24,7 +24,7 @@ os.environ.setdefault("FLY_APP_NAME", "ai-contact-center-backend")
 os.environ.setdefault("BACKEND_BASE_URL", "http://localhost:8000")
 os.environ.setdefault("FRONTEND_ORIGIN", "http://localhost:5173")
 
-from backend.app.main import app  # noqa: E402
+from app.main import app  # noqa: E402
 
 
 SCHEMA_PATH = (

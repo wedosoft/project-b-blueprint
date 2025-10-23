@@ -18,7 +18,7 @@ except ImportError:  # pragma: no cover - optional dependency
     AsyncAnthropic = None  # type: ignore[assignment]
     Message = None  # type: ignore[misc,assignment]
 
-from backend.core.config import get_settings
+from core.config import get_settings
 
 logger = logging.getLogger(__name__)
 

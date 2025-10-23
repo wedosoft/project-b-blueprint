@@ -8,12 +8,12 @@ from uuid import UUID, uuid4
 
 from fastapi import HTTPException, status
 
-from backend.app.repositories.conversation_repository import (
+from app.repositories.conversation_repository import (
     ConversationRecord,
     ConversationRepository,
     MessageRecord,
 )
-from backend.app.schemas.conversation import (
+from app.schemas.conversation import (
     ConversationResponse,
     ConversationResource,
     MessageAttachment,
