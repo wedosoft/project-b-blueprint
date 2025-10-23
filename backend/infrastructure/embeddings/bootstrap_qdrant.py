@@ -21,7 +21,7 @@ from qdrant_client import QdrantClient
 from qdrant_client.http.exceptions import UnexpectedResponse
 from qdrant_client.http import models as rest_models
 
-from backend.core.config import Settings, get_settings
+from core.config import Settings, get_settings
 
 DistanceAlias = rest_models.Distance
 

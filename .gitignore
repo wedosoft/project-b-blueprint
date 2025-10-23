@@ -27,3 +27,6 @@ backend/venv/
 .gcp/
 .gcloud*
 raw_data/
+backend/venv
+backend/.hypothesis/
+backend/.pytest_cache/

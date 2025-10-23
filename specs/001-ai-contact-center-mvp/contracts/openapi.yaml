@@ -264,7 +264,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: Supabase access token in `Authorization: Bearer` header.
+      description: "Supabase access token in `Authorization: Bearer` header."
   parameters:
     ConversationId:
       name: conversationId
