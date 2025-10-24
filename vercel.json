@@ -1,0 +1,10 @@
+{
+  "buildCommand": "cd frontend && pnpm install && pnpm build",
+  "outputDirectory": "frontend/dist",
+  "devCommand": "cd frontend && pnpm dev",
+  "installCommand": "cd frontend && pnpm install",
+  "framework": null,
+  "env": {
+    "VITE_API_URL": "https://project-b-blueprint.fly.dev"
+  }
+}
