@@ -1,0 +1,38 @@
+# General
+.git
+.gitignore
+Dockerfile
+README.md
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.venv/
+venv/
+backend/venv/
+backend/venv.*/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+backend/.hypothesis/
+
+# Node / TypeScript artifacts
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.turbo/
+frontend/.vitest/
+frontend/coverage/
+
+# Logs & env
+*.log
+*.tmp
+.env
+.env.*
+
+# Editor and tooling
+.vscode/
+.idea/

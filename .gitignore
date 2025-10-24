@@ -11,7 +11,32 @@ node_modules
 dist
 dist-ssr
 *.local
+
+# Environment files
+.env
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.venv/
+venv/
 backend/venv/
+backend/venv.*/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+backend/.hypothesis/
+
+# Node / TypeScript
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.turbo/
+frontend/.vitest/
+frontend/coverage/
 
 # Editor directories and files
 .vscode/*
@@ -23,7 +48,6 @@ backend/venv/
 *.njsproj
 *.sln
 *.sw?
-.env*
 .gcp/
 .gcloud*
 raw_data/
