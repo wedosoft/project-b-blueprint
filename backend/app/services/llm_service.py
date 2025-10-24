@@ -11,18 +11,11 @@ from typing import List, Literal, Sequence, Tuple, TypedDict
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
-try:  # anthropic is optional; fallback handling must tolerate absence.
-    from anthropic import AsyncAnthropic
-    from anthropic.types import Message
-except ImportError:  # pragma: no cover - optional dependency
-    AsyncAnthropic = None  # type: ignore[assignment]
-    Message = None  # type: ignore[misc,assignment]
-
 from core.config import get_settings
 
 logger = logging.getLogger(__name__)
 
-LLMProvider = Literal["openai", "anthropic", "fallback"]
+LLMProvider = Literal["openai", "fallback"]
 
 
 class ChatMessage(TypedDict):
@@ -80,17 +73,6 @@ class LLMService:
         if self._settings.llm.openai_api_key:
             self._openai_client = AsyncOpenAI(
                 api_key=self._settings.llm.openai_api_key.get_secret_value(),
-                timeout=self._settings.llm.request_timeout_seconds,
-            )
-
-        self._anthropic_client: AsyncAnthropic | None = None
-        if (
-            AsyncAnthropic is not None
-            and self._settings.llm.anthropic_api_key
-            and self._settings.llm.anthropic_api_key.get_secret_value()
-        ):
-            self._anthropic_client = AsyncAnthropic(
-                api_key=self._settings.llm.anthropic_api_key.get_secret_value(),
                 timeout=self._settings.llm.request_timeout_seconds,
             )
 
@@ -162,14 +144,6 @@ class LLMService:
                         top_p=top_p,
                         max_output_tokens=max_output_tokens,
                     )
-                if provider == "anthropic":
-                    return await self._invoke_anthropic(
-                        messages=messages,
-                        model_override=model_override,
-                        temperature=temperature,
-                        top_p=top_p,
-                        max_output_tokens=max_output_tokens,
-                    )
                 raise RuntimeError(f"Unsupported provider: {provider}")
             except Exception as exc:  # pragma: no cover - depends on network
                 last_error = exc
@@ -184,13 +158,9 @@ class LLMService:
 
         if self._primary_provider == "openai" and self._openai_client:
             sequence.append("openai")
-        elif self._primary_provider == "anthropic" and self._anthropic_client:
-            sequence.append("anthropic")
 
         if "openai" not in sequence and self._openai_client:
             sequence.append("openai")
-        if "anthropic" not in sequence and self._anthropic_client:
-            sequence.append("anthropic")
 
         return tuple(sequence)
 
@@ -241,70 +211,3 @@ class LLMService:
             latency_ms=latency_ms,
             usage=usage,
         )
-
-    async def _invoke_anthropic(
-        self,
-        *,
-        messages: Sequence[ChatMessage],
-        model_override: str | None,
-        temperature: float,
-        top_p: float,
-        max_output_tokens: int,
-    ) -> LLMResult:
-        if self._anthropic_client is None:
-            raise RuntimeError("Anthropic client not configured.")
-        if Message is None:
-            raise RuntimeError("Anthropic SDK not installed.")
-
-        model_name = model_override or self._settings.llm.fallback_model or "claude-3-haiku-20240307"
-        converted_messages = self._convert_messages_for_anthropic(messages)
-
-        start = time.perf_counter()
-        response: Message = await self._anthropic_client.messages.create(  # type: ignore[assignment]
-            model=model_name,
-            messages=converted_messages,
-            max_output_tokens=max_output_tokens,
-            temperature=temperature,
-            top_p=top_p,
-        )
-        latency_ms = int((time.perf_counter() - start) * 1000)
-
-        content = "".join(
-            block.text for block in response.content if getattr(block, "text", None)
-        )
-        usage = None
-        if response.usage:
-            usage = LLMUsage(
-                prompt_tokens=response.usage.input_tokens,
-                completion_tokens=response.usage.output_tokens,
-                total_tokens=response.usage.input_tokens + response.usage.output_tokens,
-            )
-
-        return LLMResult(
-            provider="anthropic",
-            model=response.model,
-            content=content,
-            latency_ms=latency_ms,
-            usage=usage,
-        )
-
-    @staticmethod
-    def _convert_messages_for_anthropic(messages: Sequence[ChatMessage]) -> List[dict]:
-        converted: List[dict] = []
-        for message in messages:
-            role = message["role"]
-            content = message["content"]
-            if role == "assistant":
-                role = "assistant"
-            elif role == "system":
-                # Anthropic expects system prompts separately; encode as "system" metadata.
-                converted.append(
-                    {"role": "system", "content": [{"type": "text", "text": content}]}
-                )
-                continue
-            else:
-                role = "user"
-            converted.append(
-                {"role": role, "content": [{"type": "text", "text": content}]}
-            )
-        return converted

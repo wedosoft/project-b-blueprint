@@ -6,22 +6,21 @@ build-backend = "setuptools.build_meta"
 name = "ai-contact-center-backend"
 version = "0.1.0"
 description = "FastAPI backend for the AI Contact Center MVP"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 dependencies = [
     "fastapi>=0.115,<1.0",
     "uvicorn[standard]>=0.30,<1.0",
     "pydantic>=2.7,<3.0",
     "httpx>=0.27,<1.0",
-    "supabase-py>=2.4,<3.0",
+    "supabase>=2.4,<3.0",
     "qdrant-client>=1.9,<2.0",
     "apscheduler>=3.10,<4.0",
     "openai>=1.40,<2.0",
-    "python-dotenv>=1.0,<2.0",
-    "anthropic>=0.34,<1.0"
+    "python-dotenv>=1.0,<2.0"
 ]
 readme = "README.md"
-license = { text = "Proprietary" }
-authors = [{ name = "AI Contact Center Team" }]
+license = {text = "Proprietary"}
+authors = [{name = "AI Contact Center Team"}]
 
 [project.optional-dependencies]
 dev = [
@@ -32,6 +31,10 @@ dev = [
     "black>=24.8,<25.0",
     "ruff>=0.7,<1.0"
 ]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*", "core*", "infrastructure*"]
 
 [tool.black]
 line-length = 100

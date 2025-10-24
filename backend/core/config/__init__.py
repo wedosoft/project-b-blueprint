@@ -59,9 +59,8 @@ class QdrantSettings(BaseModel):
 class LLMSettings(BaseModel):
     model_config = ConfigDict(extra="ignore")
 
-    provider: Literal["openai", "anthropic"] = "openai"
+    provider: Literal["openai"] = "openai"
     openai_api_key: SecretStr | None = None
-    anthropic_api_key: SecretStr | None = None
     default_model: str = "gpt-4.1-mini"
     fallback_model: str | None = None
     request_timeout_seconds: int = Field(default=30, ge=1)
@@ -69,8 +68,6 @@ class LLMSettings(BaseModel):
     def require_api_key(self) -> SecretStr:
         if self.provider == "openai" and self.openai_api_key:
             return self.openai_api_key
-        if self.provider == "anthropic" and self.anthropic_api_key:
-            return self.anthropic_api_key
         raise RuntimeError(f"No API key configured for LLM provider '{self.provider}'.")
 
 
@@ -134,9 +131,6 @@ def get_settings() -> Settings:
             provider=os.getenv("LLM_PROVIDER", "openai"),  # type: ignore[arg-type]
             openai_api_key=(
                 SecretStr(api_key) if (api_key := os.getenv("OPENAI_API_KEY")) else None
-            ),
-            anthropic_api_key=(
-                SecretStr(api_key) if (api_key := os.getenv("ANTHROPIC_API_KEY")) else None
             ),
             default_model=os.getenv("OPENAI_MODEL", "gpt-4.1-mini"),
             fallback_model=os.getenv("LLM_FALLBACK_MODEL"),

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 
-from app.api.routes import conversations
+from .routes import conversations
 
 
 def register_routes(app: FastAPI) -> None:
