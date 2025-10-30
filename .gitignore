@@ -37,3 +37,57 @@ __pycache__/
 *$py.class
 *.so
 .Python
+
+# Claude Flow - 프로젝트 영구 저장을 위한 설정
+# MCP 설정 포함
+# .mcp.json
+
+# Claude-Flow 메모리 DB 포함
+# .swarm/memory.db
+# .hive-mind/hive.db
+
+# Claude 설정 포함 (개인 설정 제외)
+.claude/settings.local.json
+.claude/checkpoints/*
+!.claude/checkpoints/.gitkeep
+
+# Claude-Flow 메트릭 제외 (임시 데이터)
+.claude-flow/metrics/*
+!.claude-flow/metrics/.gitkeep
+
+# 메모리 포함 (활성 세션 제외)
+# memory/
+memory/sessions/active-*
+!memory/sessions/README.md
+!memory/agents/README.md
+
+# Serena - 사용하지 않음 (Claude-Flow로 통일)
+.serena/
+
+# Coordination 작업 데이터 제외 (임시 데이터)
+coordination/memory_bank/*
+!coordination/memory_bank/.gitkeep
+coordination/subtasks/*
+!coordination/subtasks/.gitkeep
+coordination/orchestration/*
+!coordination/orchestration/.gitkeep
+
+# DB 파일 포함 (저널/WAL 파일만 제외)
+# *.db
+*.db-journal
+*.db-wal
+# *.sqlite
+*.sqlite-journal
+*.sqlite-wal
+
+# Claude-Flow 실행 파일 포함
+# claude-flow
+
+# Hive-Mind 로그 제외 (임시 데이터)
+.hive-mind/logs/*
+!.hive-mind/logs/.gitkeep
+.hive-mind/backups/*
+!.hive-mind/backups/.gitkeep
+
+# 임시 프롬프트 파일 제외
+hive-mind-prompt-*.txt
