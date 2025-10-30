@@ -12,6 +12,10 @@ from ...schemas.conversation import (
     StartConversationRequest,
 )
 from ...services.conversation_service import ConversationService
+from ...services.llm_service import LLMService
+from ...services.qdrant_service import QdrantService
+from core.config import get_settings
+from openai import AsyncOpenAI
 
 
 router = APIRouter(prefix="/v1/conversations", tags=["Conversations"])
@@ -23,8 +27,26 @@ def get_conversation_repository() -> ConversationRepository:
 
 
 @lru_cache(maxsize=1)
+def get_llm_service() -> LLMService:
+    return LLMService()
+
+
+@lru_cache(maxsize=1)
+def get_qdrant_service() -> QdrantService:
+    """Create QdrantService with OpenAI client for embeddings."""
+    settings = get_settings()
+    openai_api_key = settings.llm.require_api_key().get_secret_value()
+    openai_client = AsyncOpenAI(api_key=openai_api_key)
+    return QdrantService(settings=settings, openai_client=openai_client)
+
+
+@lru_cache(maxsize=1)
 def get_conversation_service() -> ConversationService:
-    return ConversationService(repository=get_conversation_repository())
+    return ConversationService(
+        repository=get_conversation_repository(),
+        llm_service=get_llm_service(),
+        qdrant_service=get_qdrant_service(),
+    )
 
 
 @router.post(

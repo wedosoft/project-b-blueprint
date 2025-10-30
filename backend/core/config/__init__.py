@@ -10,7 +10,7 @@ from typing import Literal
 from dotenv import load_dotenv
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, SecretStr
 
-_ROOT_DIR = Path(__file__).resolve().parents[2]
+_ROOT_DIR = Path(__file__).resolve().parents[3]  # Project root (not backend/)
 load_dotenv(_ROOT_DIR / ".env", override=False)
 
 

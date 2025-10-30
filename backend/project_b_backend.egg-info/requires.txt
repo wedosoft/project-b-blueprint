@@ -1,0 +1,17 @@
+fastapi<1.0,>=0.115
+uvicorn[standard]<1.0,>=0.30
+pydantic<3.0,>=2.7
+httpx<1.0,>=0.27
+supabase<3.0,>=2.4
+qdrant-client<2.0,>=1.9
+apscheduler<4.0,>=3.10
+openai<2.0,>=1.40
+python-dotenv<2.0,>=1.0
+
+[dev]
+pytest<9.0,>=8.3
+pytest-asyncio<1.0,>=0.23
+schemathesis<4.0,>=3.28
+respx<1.0,>=0.21
+black<25.0,>=24.8
+ruff<1.0,>=0.7

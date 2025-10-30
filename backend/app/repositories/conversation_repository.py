@@ -68,7 +68,8 @@ class ConversationRepository:
             self._conversations[conversation.id] = conversation
             messages = [first_message]
             self._messages[conversation.id] = messages
-            return conversation, messages
+            # Return a copy to avoid mutation issues
+            return conversation, list(messages)
 
     async def list_messages(self, conversation_id: UUID) -> List[MessageRecord]:
         """Return messages associated with a conversation."""

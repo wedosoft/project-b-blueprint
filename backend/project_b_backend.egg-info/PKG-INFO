@@ -1,0 +1,28 @@
+Metadata-Version: 2.4
+Name: project-b-backend
+Version: 0.1.0
+Summary: FastAPI backend for the AI Contact Center MVP
+Author: AI Contact Center Team
+License: Proprietary
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi<1.0,>=0.115
+Requires-Dist: uvicorn[standard]<1.0,>=0.30
+Requires-Dist: pydantic<3.0,>=2.7
+Requires-Dist: httpx<1.0,>=0.27
+Requires-Dist: supabase<3.0,>=2.4
+Requires-Dist: qdrant-client<2.0,>=1.9
+Requires-Dist: apscheduler<4.0,>=3.10
+Requires-Dist: openai<2.0,>=1.40
+Requires-Dist: python-dotenv<2.0,>=1.0
+Provides-Extra: dev
+Requires-Dist: pytest<9.0,>=8.3; extra == "dev"
+Requires-Dist: pytest-asyncio<1.0,>=0.23; extra == "dev"
+Requires-Dist: schemathesis<4.0,>=3.28; extra == "dev"
+Requires-Dist: respx<1.0,>=0.21; extra == "dev"
+Requires-Dist: black<25.0,>=24.8; extra == "dev"
+Requires-Dist: ruff<1.0,>=0.7; extra == "dev"
+
+# AI Contact Center Backend
+
+FastAPI backend for the AI Contact Center MVP. See `/specs/001-ai-contact-center-mvp` for full documentation.

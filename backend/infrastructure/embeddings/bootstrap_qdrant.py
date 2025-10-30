@@ -29,7 +29,7 @@ DistanceAlias = rest_models.Distance
 def build_client(settings: Settings) -> QdrantClient:
     """Instantiate a Qdrant client from application settings."""
     return QdrantClient(
-        url=settings.qdrant.url,
+        url=str(settings.qdrant.url),
         api_key=settings.qdrant.api_key.get_secret_value(),
         timeout=30,
     )

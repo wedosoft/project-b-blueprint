@@ -21,6 +21,7 @@ os.environ.setdefault("SUPABASE_SERVICE_ROLE_KEY", "service-role-key")
 os.environ.setdefault("SUPABASE_ANON_KEY", "anon-key")
 os.environ.setdefault("QDRANT_URL", "https://example.qdrant.io")
 os.environ.setdefault("QDRANT_API_KEY", "qdrant-key")
+os.environ.setdefault("OPENAI_API_KEY", "test-openai-key")  # LLM service requires this
 os.environ.setdefault("FLY_APP_NAME", "ai-contact-center-backend")
 os.environ.setdefault("BACKEND_BASE_URL", "http://localhost:8000")
 os.environ.setdefault("FRONTEND_ORIGIN", "http://localhost:5173")
