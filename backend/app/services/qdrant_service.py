@@ -70,7 +70,7 @@ class QdrantService:
         """
         try:
             response = await self._openai_client.embeddings.create(
-                model="text-embedding-3-small",  # 1536 dimensions
+                model="text-embedding-3-large",  # 3072 dimensions to match collection
                 input=text,
                 encoding_format="float",
             )
@@ -114,11 +114,11 @@ class QdrantService:
             rest_models.Filter(must=filter_conditions) if filter_conditions else None
         )
 
-        # Search using async client
+        # Search using async client (with named vector support)
         try:
             search_results = await self._async_client.search(
                 collection_name=self._collection,
-                query_vector=query_vector,
+                query_vector=("dense", query_vector),  # Named vector for 'documents' collection
                 limit=limit,
                 score_threshold=score_threshold,
                 query_filter=search_filter,
@@ -182,13 +182,13 @@ class QdrantService:
                 **metadata,
             }
 
-            # Upsert to Qdrant
+            # Upsert to Qdrant (with named vector support)
             await self._async_client.upsert(
                 collection_name=self._collection,
                 points=[
                     rest_models.PointStruct(
                         id=point_id,
-                        vector=vector,
+                        vector={"dense": vector},  # Named vector for 'documents' collection
                         payload=payload,
                     )
                 ],

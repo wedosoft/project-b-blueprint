@@ -52,8 +52,8 @@ class QdrantSettings(BaseModel):
 
     url: HttpUrl
     api_key: SecretStr
-    collection: str = Field(default="ccos-mvp", min_length=1)
-    vector_dimension: int = Field(default=1536, ge=1)
+    collection: str = Field(default="documents", min_length=1)
+    vector_dimension: int = Field(default=3072, ge=1)  # text-embedding-3-large dimension
 
 
 class LLMSettings(BaseModel):
@@ -124,8 +124,8 @@ def get_settings() -> Settings:
         qdrant=QdrantSettings(
             url=_require_env("QDRANT_URL"),
             api_key=SecretStr(_require_env("QDRANT_API_KEY")),
-            collection=os.getenv("QDRANT_COLLECTION", "ccos-mvp"),
-            vector_dimension=_get_int_env("QDRANT_VECTOR_DIMENSION", 1536),
+            collection=os.getenv("QDRANT_COLLECTION", "documents"),
+            vector_dimension=_get_int_env("QDRANT_VECTOR_DIMENSION", 3072),
         ),
         llm=LLMSettings(
             provider=os.getenv("LLM_PROVIDER", "openai"),  # type: ignore[arg-type]

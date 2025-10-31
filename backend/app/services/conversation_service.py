@@ -126,7 +126,8 @@ class ConversationService:
                     query_text=customer_message,
                     limit=3,  # 상위 3개 유사 문서
                     score_threshold=0.3,  # 30% 이상 유사도 (실전에서는 조정 필요)
-                    organization_id=str(organization_id),
+                    # organization_id 필터 제거 (인덱스 없음)
+                    organization_id=None,
                 )
                 context_documents = [result.content for result in search_results]
             except Exception as exc:
